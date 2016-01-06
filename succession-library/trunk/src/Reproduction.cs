@@ -313,8 +313,13 @@ namespace Landis.Library.Succession
                     if (resprout[site].Get(index)) {
                         ISpecies species = speciesDataset[index];
                         sufficientLight = SufficientResources(species, site);
-                        if (sufficientLight &&
-                                (Model.Core.GenerateUniform() < species.VegReprodProb)) {
+
+                        // RMS:  Set vegetative reproduction probability to the establishment probablility, allowing more direct control.
+                        if (sufficientLight && Establish(species, site)){ 
+
+
+                        //if (sufficientLight &&
+                        //        (Model.Core.GenerateUniform() < species.VegReprodProb)) {
                             AddNewCohort(species, site);
                             speciesResprouted = true;
                             if (isDebugEnabled)
