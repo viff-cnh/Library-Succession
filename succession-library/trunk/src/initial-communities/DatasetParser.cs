@@ -1,6 +1,11 @@
 using Landis.Core;
 using Edu.Wisc.Forest.Flel.Util;
-using Landis.Library.AgeOnlyCohorts;
+using Landis.Library.LeafBiomassCohorts;
+//using Landis.Library.BiomassCohorts;
+using System.Text;
+using System;
+using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Landis.Library.InitialCommunities
@@ -37,6 +42,20 @@ namespace Landis.Library.InitialCommunities
 
         //---------------------------------------------------------------------
 
+        /// <summary>
+        /// Creates a new InputValueException for an invalid percentage input
+        /// value.
+        /// </summary>
+        /// <returns></returns>
+        public static InputValueException MakeInputValueException(string value,
+                                                                  string message)
+        {
+            return new InputValueException(value,
+                                           string.Format("\"{0}\" is not a valid percentage for partial thinning", value),
+                                           new MultiLineText(message));
+        }
+        //---------------------------------------------------------------------
+
         protected override IDataset Parse()
         {
             //InputVar<string> landisData = new InputVar<string>("LandisData");
@@ -50,6 +69,7 @@ namespace Landis.Library.InitialCommunities
             InputVar<uint> mapCode = new InputVar<uint>("MapCode");
             InputVar<string> speciesName = new InputVar<string>("Species");
             InputVar<ushort> age = new InputVar<ushort>("Age");
+            InputVar<uint> biomass = new InputVar<uint>("Biomass gm-2");
 
             Dictionary <uint, int> mapCodeLineNumbers = new Dictionary<uint, int>();
 
@@ -110,7 +130,7 @@ namespace Landis.Library.InitialCommunities
                         ReadValue(age, currentLine);
 
                     ages = BinAges(ages);
-                    speciesCohortsList.Add(new SpeciesCohorts(species, ages));
+                    speciesCohortsList.Add(new SpeciesCohorts(species, age.Value.Actual, (float) 100.0, (float) 0.0));
                     
                     GetNextLine();
                 }
@@ -144,6 +164,96 @@ namespace Landis.Library.InitialCommunities
             }
 
             return ages;
+        }
+        
+        public static InputValue<int> ReadBiomass(StringReader reader, out int index)
+        {
+            TextReader.SkipWhitespace(reader);
+            index = reader.Index;
+
+            //  Read left parenthesis
+            int nextChar = reader.Peek();
+            if (nextChar == -1)
+                throw new InputValueException();  // Missing value
+            if (nextChar != '(')
+                throw MakeInputValueException(TextReader.ReadWord(reader),
+                                              "Value does not start with \"(\"");
+            
+            StringBuilder valueAsStr = new StringBuilder();
+            valueAsStr.Append((char)(reader.Read()));
+
+            //  Read whitespace between '(' and percentage
+            valueAsStr.Append(ReadWhitespace(reader));
+
+            //  Read percentage
+            string word = ReadWord(reader, ')');
+            if (word == "")
+                throw MakeInputValueException(valueAsStr.ToString(),
+                                              "No biomass after \"(\"");
+            valueAsStr.Append(word);
+            int biomass;
+            try
+            {
+                biomass = Int32.Parse(word); // Percentage.Parse(word);
+            }
+            catch (System.FormatException exc)
+            {
+                throw MakeInputValueException(valueAsStr.ToString(),
+                                              exc.Message);
+            }
+            if (biomass < 0.0 || biomass > 10000)
+                throw MakeInputValueException(valueAsStr.ToString(),
+                                              string.Format("{0} is not between 0% and 100%", word));
+
+            //  Read whitespace and ')'
+            valueAsStr.Append(ReadWhitespace(reader));
+            char? ch = TextReader.ReadChar(reader);
+            if (!ch.HasValue)
+                throw MakeInputValueException(valueAsStr.ToString(),
+                                              "Missing \")\"");
+            valueAsStr.Append(ch.Value);
+            if (ch != ')')
+                throw MakeInputValueException(valueAsStr.ToString(),
+                                              string.Format("Value ends with \"{0}\" instead of \")\"", ch));
+
+            return new InputValue<int>(biomass, "Biomass gm-2"); 
+        }
+        //---------------------------------------------------------------------
+
+        /// <summary>
+        /// Reads whitespace from a string reader.
+        /// </summary>
+        public static string ReadWhitespace(StringReader reader)
+        {
+            StringBuilder whitespace = new StringBuilder();
+            int i = reader.Peek();
+            while (i != -1 && char.IsWhiteSpace((char)i))
+            {
+                whitespace.Append((char)reader.Read());
+                i = reader.Peek();
+            }
+            return whitespace.ToString();
+        }
+        //---------------------------------------------------------------------
+
+        /// <summary>
+        /// Reads a word from a string reader.
+        /// </summary>
+        /// <remarks>
+        /// The word is terminated by whitespace, the end of input, or a
+        /// particular delimiter character.
+        /// </remarks>
+        public static string ReadWord(StringReader reader,
+                                      char delimiter)
+        {
+            StringBuilder word = new StringBuilder();
+            int i = reader.Peek();
+            while (i != -1 && !char.IsWhiteSpace((char)i) && i != delimiter)
+            {
+                word.Append((char)reader.Read());
+                i = reader.Peek();
+            }
+            return word.ToString();
         }
     }
 }

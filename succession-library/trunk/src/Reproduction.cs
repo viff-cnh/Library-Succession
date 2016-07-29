@@ -6,6 +6,7 @@ using System.Collections;
 using System.Reflection;
 using Landis.SpatialModeling;
 
+//using Landis.Library.LeafBiomassCohorts;
 using Landis.Library.AgeOnlyCohorts;
 
 namespace Landis.Library.Succession

@@ -1,4 +1,4 @@
-using Landis.Library.AgeOnlyCohorts;
+using Landis.Library.LeafBiomassCohorts;
 using System.Collections.Generic;
 
 namespace Landis.Library.InitialCommunities
