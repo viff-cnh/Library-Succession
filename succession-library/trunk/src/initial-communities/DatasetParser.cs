@@ -58,10 +58,6 @@ namespace Landis.Library.InitialCommunities
 
         protected override IDataset Parse()
         {
-            //InputVar<string> landisData = new InputVar<string>("LandisData");
-            //ReadVar(landisData);
-            //if (landisData.Value.Actual != name)
-            //    throw new InputValueException(landisData.Value.String, "The value is not \"{0}\"", name);
             ReadLandisDataVar();
             
             Dataset dataset = new Dataset();
@@ -122,7 +118,8 @@ namespace Landis.Library.InitialCommunities
                             throw new InputValueException(age.Value.String,
                                                           "The age {0} is more than longevity ({1}).",
                                                           age.Value.String, species.Longevity);
-                        ages.Add(age.Value.Actual);
+                        ReadBiomass(currentLine);
+                        //ages.Add(age.Value.Actual);
                         TextReader.SkipWhitespace(currentLine);
                     }
                     if (ages.Count == 0)
@@ -130,7 +127,8 @@ namespace Landis.Library.InitialCommunities
                         ReadValue(age, currentLine);
 
                     ages = BinAges(ages);
-                    speciesCohortsList.Add(new SpeciesCohorts(species, age.Value.Actual, (float) 100.0, (float) 0.0));
+                    
+                    speciesCohortsList.Add(new SpeciesCohorts(species, age.Value.Actual, (float) biomass.Value.Actual, (float) 0.0));
                     
                     GetNextLine();
                 }
@@ -166,10 +164,10 @@ namespace Landis.Library.InitialCommunities
             return ages;
         }
         
-        public static InputValue<int> ReadBiomass(StringReader reader, out int index)
+        public static uint ReadBiomass(StringReader reader)
         {
             TextReader.SkipWhitespace(reader);
-            index = reader.Index;
+            //index = reader.Index;
 
             //  Read left parenthesis
             int nextChar = reader.Peek();
@@ -191,10 +189,10 @@ namespace Landis.Library.InitialCommunities
                 throw MakeInputValueException(valueAsStr.ToString(),
                                               "No biomass after \"(\"");
             valueAsStr.Append(word);
-            int biomass;
+            uint biomass;
             try
             {
-                biomass = Int32.Parse(word); // Percentage.Parse(word);
+                biomass = (uint) Int32.Parse(word); // Percentage.Parse(word);
             }
             catch (System.FormatException exc)
             {
@@ -216,7 +214,7 @@ namespace Landis.Library.InitialCommunities
                 throw MakeInputValueException(valueAsStr.ToString(),
                                               string.Format("Value ends with \"{0}\" instead of \")\"", ch));
 
-            return new InputValue<int>(biomass, "Biomass gm-2"); 
+            return new InputValue<uint>(biomass, "Biomass gm-2"); 
         }
         //---------------------------------------------------------------------
 
