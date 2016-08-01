@@ -19,8 +19,6 @@ namespace Landis.Library.InitialCommunities
         private int successionTimestep;
         private ISpeciesDataset speciesDataset;
 
-        //private static readonly string name = "Initial Communities";
-
         public override string LandisDataValue
         {
             get
@@ -65,7 +63,8 @@ namespace Landis.Library.InitialCommunities
             InputVar<uint> mapCode = new InputVar<uint>("MapCode");
             InputVar<string> speciesName = new InputVar<string>("Species");
             InputVar<ushort> age = new InputVar<ushort>("Age");
-            InputVar<uint> biomass = new InputVar<uint>("Biomass gm-2");
+            //InputVar<uint> biomass = new InputVar<uint>("Biomass gm-2");
+            uint biomass = 0;
 
             Dictionary <uint, int> mapCodeLineNumbers = new Dictionary<uint, int>();
 
@@ -118,17 +117,20 @@ namespace Landis.Library.InitialCommunities
                             throw new InputValueException(age.Value.String,
                                                           "The age {0} is more than longevity ({1}).",
                                                           age.Value.String, species.Longevity);
-                        ReadBiomass(currentLine);
+                        //TextReader.SkipWhitespace(currentLine);
+
+                        //Landis.Library.Succession.Model.Core.UI.WriteLine("New read in biomass value.");
+                        biomass = ReadBiomass(currentLine);
                         //ages.Add(age.Value.Actual);
                         TextReader.SkipWhitespace(currentLine);
                     }
-                    if (ages.Count == 0)
-                        //  Try reading age which will throw exception
-                        ReadValue(age, currentLine);
+                    //if (ages.Count == 0)
+                    //    //  Try reading age which will throw exception
+                    //    ReadValue(age, currentLine);
 
                     ages = BinAges(ages);
                     
-                    speciesCohortsList.Add(new SpeciesCohorts(species, age.Value.Actual, (float) biomass.Value.Actual, (float) 0.0));
+                    speciesCohortsList.Add(new SpeciesCohorts(species, age.Value.Actual, (float) biomass, (float) 0.0));
                     
                     GetNextLine();
                 }
@@ -163,8 +165,8 @@ namespace Landis.Library.InitialCommunities
 
             return ages;
         }
-        
-        public static uint ReadBiomass(StringReader reader)
+
+        public static InputValue<uint> ReadBiomass(StringReader reader)
         {
             TextReader.SkipWhitespace(reader);
             //index = reader.Index;
@@ -213,6 +215,8 @@ namespace Landis.Library.InitialCommunities
             if (ch != ')')
                 throw MakeInputValueException(valueAsStr.ToString(),
                                               string.Format("Value ends with \"{0}\" instead of \")\"", ch));
+            
+            Landis.Library.Succession.Model.Core.UI.WriteLine("Read in biomass value: {0}", biomass);
 
             return new InputValue<uint>(biomass, "Biomass gm-2"); 
         }
