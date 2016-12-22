@@ -43,7 +43,7 @@ namespace Landis.Library.Succession
             this.ShowProgress = true;
         }
 
-        
+
         //---------------------------------------------------------------------
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Landis.Library.Succession
         }
 
         //---------------------------------------------------------------------
-        
+
 
         /// <summary>
         /// Initializes the instance and its associated site variables.
@@ -185,7 +185,7 @@ namespace Landis.Library.Succession
             ProgressBar progressBar = null;
             if (ShowProgress)
             {
-                System.Console.WriteLine("Ageing cohorts ...");
+                System.Console.WriteLine("growing cohorts ...");
                 prevSiteDataIndex = null;
                 progressBar = Landis.Model.iui.CreateProgressMeter(Model.Core.Landscape.ActiveSiteCount); // NewProgressBar();
             }
@@ -323,7 +323,7 @@ namespace Landis.Library.Succession
         // }
 
         //---------------------------------------------------------------------
-        
+
         private void Update(ProgressBar progressBar,
                             uint currentSiteDataIndex)
         {
