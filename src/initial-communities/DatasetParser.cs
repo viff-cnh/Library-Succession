@@ -49,7 +49,7 @@ namespace Landis.Library.InitialCommunities
                                                                   string message)
         {
             return new InputValueException(value,
-                                           string.Format("\"{0}\" is not a valid percentage for partial thinning", value),
+                                           string.Format("\"{0}\" is not a valid aboveground biomass input", value),
                                            new MultiLineText(message));
         }
         //---------------------------------------------------------------------
@@ -201,7 +201,7 @@ namespace Landis.Library.InitialCommunities
                 throw MakeInputValueException(valueAsStr.ToString(),
                                               exc.Message);
             }
-            if (biomass < 0.0 || biomass > 10000)
+            if (biomass < 0.0 || biomass > 100000)
                 throw MakeInputValueException(valueAsStr.ToString(),
                                               string.Format("{0} is not between 0% and 100%", word));
 
