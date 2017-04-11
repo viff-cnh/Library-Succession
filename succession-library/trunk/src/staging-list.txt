@@ -1,4 +1,4 @@
 {OutDir}\Landis.Library.Succession.dll
 {OutDir}\Landis.Library.Succession.pdb
 --no-overwrite
-{OutDir}\Landis.Library.AgeOnlyCohorts.dll
+{OutDir}\Seed Dipsersal.dll

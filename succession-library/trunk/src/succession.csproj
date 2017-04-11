@@ -34,29 +34,40 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Edu.Wisc.Forest.Flel.Util">
-      <HintPath>C:\Program Files\LANDIS-II\v6\bin\6.0\Edu.Wisc.Forest.Flel.Util.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\LANDIS-II\v6\bin\6.2\Edu.Wisc.Forest.Flel.Util.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Core">
-      <HintPath>C:\Program Files\LANDIS-II\v6\bin\6.0\Landis.Core.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\LANDIS-II\v6\bin\6.2\Landis.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Landis.Library.AgeOnlyCohorts">
-      <HintPath>packages\Landis.Library.AgeOnlyCohorts.2.1.0-rc2\lib\net35\Landis.Library.AgeOnlyCohorts.dll</HintPath>
+    <Reference Include="Landis.Library.AgeOnlyCohorts, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\LANDIS-II\v6\bin\extensions\Landis.Library.AgeOnlyCohorts.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.Cohorts, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\LANDIS-II\v6\bin\extensions\Landis.Library.Cohorts.dll</HintPath>
     </Reference>
-    <Reference Include="Landis.SpatialModeling, Version=1.0.4004.26360, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\LANDIS-II\v6\bin\6.0\Landis.SpatialModeling.dll</HintPath>
+    <Reference Include="Landis.SpatialModeling">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\LANDIS-II\v6\bin\6.2\Landis.SpatialModeling.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.9.0, Culture=neutral, PublicKeyToken=b32731d11ce58905">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\LANDIS-II\v6\bin\6.0\log4net.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\LANDIS-II\v6\bin\6.2\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Seed Dipsersal">
+      <HintPath>libs\seed_dispersal\1.2.0\Seed Dipsersal.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CohortSiteVar.cs" />
+    <Compile Include="demographic-seeding\Algorithm.cs" />
+    <Compile Include="demographic-seeding\IntPixel.cs" />
+    <Compile Include="demographic-seeding\MapPaths.cs" />
+    <Compile Include="demographic-seeding\ParameterParser.cs" />
+    <Compile Include="demographic-seeding\Parameters.cs" />
+    <Compile Include="demographic-seeding\ParsingUtils.cs" />
+    <Compile Include="demographic-seeding\SpeciesParameters.cs" />
     <Compile Include="DisturbedSiteEnumerator.cs" />
     <Compile Include="ExtensionBase.cs" />
     <Compile Include="FormOfReproduction.cs" />
@@ -85,12 +96,9 @@
     <Compile Include="UniversalDispersal.cs" />
     <Compile Include="WardSeedDispersal.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(LANDIS_SDK)\staging\copy-to-build-dir.cmd" "$(ProjectDir)staging-list.txt" $(OutDir)</PostBuildEvent>
+    <PostBuildEvent>copy $(TargetName).* "C:\Program Files\LANDIS-II\v6\bin\extensions"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
