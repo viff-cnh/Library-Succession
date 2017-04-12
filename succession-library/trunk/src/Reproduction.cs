@@ -21,7 +21,7 @@ namespace Landis.Library.Succession
             /// A method to add new young cohort for a particular species at a
             /// site.
             /// </summary>
-            public delegate void AddNewCohort(ISpecies species, ActiveSite site);
+            public delegate void AddNewCohort(ISpecies species, ActiveSite site, double propBiomass);
 
             //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -289,7 +289,8 @@ namespace Landis.Library.Succession
                         ISpecies species = speciesDataset[index];
                         sufficientLight = SufficientResources(species, site);
                         if (sufficientLight && Establish(species, site)) {
-                            AddNewCohort(species, site);
+                            // Temp set propBiomass to 1.0
+                            AddNewCohort(species, site, 1.0);
                             serotinyOccurred = true;
                             if (isDebugEnabled)
                                 log.DebugFormat("site {0}: {1} post-fire regenerated",
@@ -315,7 +316,8 @@ namespace Landis.Library.Succession
                         sufficientLight = SufficientResources(species, site);
                         if (sufficientLight &&
                                 (Model.Core.GenerateUniform() < species.VegReprodProb)) {
-                            AddNewCohort(species, site);
+                            // Temp set propBiomass to 1.0
+                            AddNewCohort(species, site, 1.0);
                             speciesResprouted = true;
                             if (isDebugEnabled)
                                 log.DebugFormat("site {0}: {1} resprouted",

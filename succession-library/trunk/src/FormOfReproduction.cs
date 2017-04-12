@@ -80,7 +80,8 @@ namespace Landis.Library.Succession
                 if (selectedSpeciesAtSite.Get(index)) {
                     ISpecies species = speciesDataset[index];
                     if (PreconditionsSatisfied(species, site)) {
-                        Reproduction.AddNewCohort(species, site);
+                        // Temp set propBiomass to 1.0
+                        Reproduction.AddNewCohort(species, site, 1.0);
                         success = true;
                     }
                 }

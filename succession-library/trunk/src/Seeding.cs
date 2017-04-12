@@ -27,13 +27,41 @@ namespace Landis.Library.Succession
 
         public void Do(ActiveSite site)
         {
-            for (int i = 0; i < Model.Core.Species.Count; i++) {
-                ISpecies species = Model.Core.Species[i];
-                if (seedingAlgorithm(species, site)) {
-                    Reproduction.AddNewCohort(species, site);
-                    if (isDebugEnabled)
-                        log.DebugFormat("site {0}: seeded {1}",
-                                        site.Location, species.Name);
+            // Accumulate seedling density if using demographic seeding
+            if (seedingAlgorithm.GetType() == typeof(DemographicSeeding.Algorithm))
+            {
+                for (int i = 0; i < Model.Core.Species.Count; i++)
+                {
+                    ISpecies species = Model.Core.Species[i];
+                    bool established;
+                    int seedlingCount;
+                    seedingAlgorithm(species, site, out established, out seedlingCount);
+                        if(established)
+                    {
+                        // Temp set propBiomass to 1.0
+                        Reproduction.AddNewCohort(species, site, 1.0);
+                        if (isDebugEnabled)
+                            log.DebugFormat("site {0}: seeded {1}",
+                                            site.Location, species.Name);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < Model.Core.Species.Count; i++)
+                {
+                    ISpecies species = Model.Core.Species[i];
+                    bool established;
+                    int seedlingCount;
+                    seedingAlgorithm(species, site, out established, out seedlingCount);
+                    if (established)
+                    {
+                        // Temp set propBiomass to 1.0
+                        Reproduction.AddNewCohort(species, site, 1.0);
+                        if (isDebugEnabled)
+                            log.DebugFormat("site {0}: seeded {1}",
+                                            site.Location, species.Name);
+                    }
                 }
             }
         }

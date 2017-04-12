@@ -115,6 +115,18 @@ namespace Landis.Library.Succession.DemographicSeeding
                           seedingData.survival_probability[species.Index]);
             }
 
+            foreach(Site site in Model.Core.Landscape.AllSites)
+            {
+                int x = site.Location.Column - 1;
+                int y = site.Location.Row - 1;
+                int ecoIndex = 0;
+                IEcoregion siteEco = Model.Core.Ecoregion[site];
+                if (siteEco != null)
+                {
+                    ecoIndex = siteEco.Index;
+                }
+                seedingData.ecoregion[x][y] = ecoIndex;
+            }
             seedingData.Initialize();
             WriteProbabilities();
         }
@@ -135,8 +147,8 @@ namespace Landis.Library.Succession.DemographicSeeding
         /// <param name="species"></param>
         /// <param name="site">Site that may be seeded.</param>
         /// <returns>true if the species seeds the site.</returns>
-        public bool DoesSpeciesSeedSite(ISpecies   species,
-                                        ActiveSite site)
+        public void DoesSpeciesSeedSite(ISpecies   species,
+                                        ActiveSite site, out bool established, out int seedlingCount)
         {
             // Is this the first site for the current timestep?
             if (Model.Core.CurrentTime != timeAtLastCall)
@@ -150,9 +162,9 @@ namespace Landis.Library.Succession.DemographicSeeding
             int x = site.Location.Column - 1;
             int y = site.Location.Row - 1;
             int s = species.Index;
-            int seedlingCount = seedingData.seedlings[s][x][y];
+            seedlingCount = seedingData.seedlings[s][x][y];
 
-            return seedlingCount > seedingData.cohort_threshold;
+            established = seedlingCount > seedingData.cohort_threshold;
         }
 
         //---------------------------------------------------------------------
