@@ -188,7 +188,7 @@ namespace Landis.Library.Succession
             ProgressBar progressBar = null;
             if (ShowProgress)
             {
-                System.Console.WriteLine("Ageing cohorts ...");
+                System.Console.WriteLine("growing cohorts ...");
                 prevSiteDataIndex = null;
                 progressBar = Model.Core.UI.CreateProgressMeter(Model.Core.Landscape.ActiveSiteCount); // NewProgressBar();
             }

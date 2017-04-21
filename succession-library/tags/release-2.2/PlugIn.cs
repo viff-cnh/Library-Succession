@@ -177,7 +177,7 @@ namespace Landis.Succession
 
             ProgressBar progressBar = null;
             if (ShowProgress) {
-                System.Console.WriteLine("Ageing cohorts ...");
+                System.Console.WriteLine("growing cohorts ...");
                 progressBar = NewProgressBar();
             }
 
