@@ -1,4 +1,4 @@
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
 using Landis.Library.InitialCommunities;
 using Landis.Core;
 using Landis.Library.AgeOnlyCohorts;
