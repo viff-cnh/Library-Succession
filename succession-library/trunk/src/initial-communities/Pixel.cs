@@ -1,4 +1,3 @@
-//using Wisc.Flel.GeospatialModeling.RasterIO;
 using Landis.SpatialModeling;
 using Landis.SpatialModeling.CoreServices;
 
