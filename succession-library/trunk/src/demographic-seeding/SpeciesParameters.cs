@@ -23,7 +23,6 @@ namespace Landis.Library.Succession.DemographicSeeding
     {
         private int minSeedsProduced;
         private int maxSeedsProduced;
-        private double leafArea;
         public double[] DispersalParameters { get; private set; }
         public double[] EmergenceProbabilities { get; private set; }
         public double[] SurvivalProbabilities { get; private set; }
@@ -83,27 +82,6 @@ namespace Landis.Library.Succession.DemographicSeeding
         }
 
         //---------------------------------------------------------------------
-
-        /// <summary>
-        /// Projected canopy area of a “typical” seedling.
-        /// </summary>
-        public double LeafArea
-        {
-            get
-            {
-                return leafArea;
-            }
-            set
-            {
-                if (value <= 0)
-                    throw new InputValueException(value.ToString(),
-                                                  "Seedling leaf area must be > 0");
-                leafArea = value;
-            }
-        }
-
-        //---------------------------------------------------------------------
-
         /// <summary>
         /// Mean1 parameter for 2-component exponential dispersal kernel
         /// </summary>

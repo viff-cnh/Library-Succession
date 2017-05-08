@@ -76,6 +76,7 @@ namespace Landis.Library.Succession.DemographicSeeding
             {
                 seedingData.all_species[species.Index].shade_tolerance = species.ShadeTolerance;
                 seedingData.all_species[species.Index].reproductive_age = species.Maturity;
+                seedingData.all_species[species.Index].reproductive_age_steps = species.Maturity / successionTimestep;
             }
 
             // Load user-specified parameters
@@ -88,6 +89,8 @@ namespace Landis.Library.Succession.DemographicSeeding
             seedingData.seed_model       = parameters.SeedProductionModel;
             seedingData.mc_draws         = parameters.MonteCarloDraws;
             seedingData.max_leaf_area    = parameters.MaxLeafArea;
+            seedingData.seedling_leaf_area = parameters.SeedlingLeafArea;
+            seedingData.min_cohort_prop = parameters.MinCohortProp;
             seedingData.cohort_threshold = parameters.CohortThreshold;
 
             seedRainMaps          = parameters.SeedRainMaps;
@@ -106,11 +109,10 @@ namespace Landis.Library.Succession.DemographicSeeding
                 SpeciesParameters speciesParameters = parameters.SpeciesParameters[species.Index]; 
                 seedingData.all_species[species.Index].min_seed  = speciesParameters.MinSeedsProduced;
                 seedingData.all_species[species.Index].max_seed  = speciesParameters.MaxSeedsProduced;
-                seedingData.all_species[species.Index].leaf_area = speciesParameters.LeafArea;
                 CopyArray(speciesParameters.DispersalParameters,
                           seedingData.all_species[species.Index].dispersal_parameters);
-                CopyArray(speciesParameters.EmergenceProbabilities,
-                          seedingData.emergence_probability[species.Index]);
+                //CopyArray(speciesParameters.EmergenceProbabilities,
+                //          seedingData.emergence_probability[species.Index]);
                 CopyArray(speciesParameters.SurvivalProbabilities,
                           seedingData.survival_probability[species.Index]);
             }
@@ -126,6 +128,14 @@ namespace Landis.Library.Succession.DemographicSeeding
                     ecoIndex = siteEco.Index;
                 }
                 seedingData.ecoregion[x][y] = ecoIndex;
+                if (site.IsActive)
+                {
+                    foreach (ISpecies species in Model.Core.Species)
+                    {
+                        seedingData.emergence_probability[species.Index][x][y] = Reproduction.EstablishmentProbability(species, (ActiveSite)site);
+                    }
+                }
+
             }
             seedingData.Initialize();
             WriteProbabilities();
@@ -148,7 +158,7 @@ namespace Landis.Library.Succession.DemographicSeeding
         /// <param name="site">Site that may be seeded.</param>
         /// <returns>true if the species seeds the site.</returns>
         public void DoesSpeciesSeedSite(ISpecies   species,
-                                        ActiveSite site, out bool established, out int seedlingCount)
+                                        ActiveSite site, out bool established, out double seedlingProportion)
         {
             // Is this the first site for the current timestep?
             if (Model.Core.CurrentTime != timeAtLastCall)
@@ -162,9 +172,22 @@ namespace Landis.Library.Succession.DemographicSeeding
             int x = site.Location.Column - 1;
             int y = site.Location.Row - 1;
             int s = species.Index;
-            seedlingCount = seedingData.seedlings[s][x][y];
+            double seedlingCount = seedingData.seedlings[s][x][y];
 
-            established = seedlingCount > seedingData.cohort_threshold;
+            double seedlingArea = seedingData.seedling_leaf_area;
+            double minSeedlingProp = seedingData.min_cohort_prop;
+
+            seedlingProportion = seedlingCount * seedlingArea / (Model.Core.CellArea*10000); //m2
+            if (seedlingProportion < minSeedlingProp)
+            {
+                established = false;
+                seedlingCount = 0;
+                seedingData.seedlings[s][x][y] = 0;
+                seedingData.cohorts[s][x][y][0] = 0;
+            }
+            else
+                established = true;
+            //established = seedlingCount > seedingData.cohort_threshold;
         }
 
         //---------------------------------------------------------------------
@@ -193,6 +216,25 @@ namespace Landis.Library.Succession.DemographicSeeding
             if (isDebugEnabled)
                 log.DebugFormat("Starting DemographicSeeding.Algorithm.SimulateOneTimestep() ...");
 
+            // Reset mapped values
+            foreach (ActiveSite site in Model.Core.Landscape)
+            {
+                int x = site.Location.Column - 1;
+                int y = site.Location.Row - 1;
+                foreach (ISpecies species in Model.Core.Species)
+                {
+                    int s = species.Index;
+                    Array.Clear(seedingData.cohorts[s][x][y], 0, seedingData.cohorts[s][x][y].Length);
+                    Array.Clear(seedingData.seed_emergence[s][x][y], 0, seedingData.seed_emergence[s][x][y].Length);
+                    Array.Clear(seedingData.seed_production[s][x][y], 0, seedingData.seed_production[s][x][y].Length);
+                    Array.Clear(seedingData.seed_shadow[s][x][y], 0, seedingData.seed_shadow[s][x][y].Length);
+                    seedingData.seedlings[s][x][y] = 0;
+                    // Update the EmergenceProbability to be equal to EstablishmentProbability from Succession extension
+                    seedingData.emergence_probability[s][x][y] = Reproduction.EstablishmentProbability(species, site);
+                }
+            }
+
+            // This section identifies mature cohorts for seeding
             foreach (ActiveSite site in Model.Core.Landscape)
             {
                 int x = site.Location.Column - 1;

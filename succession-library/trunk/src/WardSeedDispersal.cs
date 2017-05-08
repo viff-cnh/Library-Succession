@@ -19,12 +19,12 @@ namespace Landis.Library.Succession
         //---------------------------------------------------------------------
 
         public static void Algorithm(ISpecies species,
-                                        ActiveSite site, out bool established, out int seedlingCount)
+                                        ActiveSite site, out bool established, out double seedlingProportion)
         {
-            seedlingCount = 0;
+            seedlingProportion = 1;
             if (species.EffectiveSeedDist == Universal)
             {
-                UniversalDispersal.Algorithm(species, site,out established,out seedlingCount);
+                UniversalDispersal.Algorithm(species, site, out established, out seedlingProportion);
             }
 
             if (! Reproduction.SufficientResources(species, site)) {

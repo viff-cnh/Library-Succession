@@ -10,11 +10,11 @@ namespace Landis.Library.Succession
     public static class UniversalDispersal
     {
         public static void Algorithm(ISpecies species,
-                                        ActiveSite site, out bool established, out int seedlingCount)
+                                        ActiveSite site, out bool established, out double seedlingProportion)
         {
             established =  Reproduction.SufficientResources(species, site) &&
                    Reproduction.Establish(species, site);
-            seedlingCount = 0;
+            seedlingProportion = 1;
         }
     }
 }

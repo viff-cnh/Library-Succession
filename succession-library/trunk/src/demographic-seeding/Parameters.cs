@@ -24,6 +24,8 @@ namespace Landis.Library.Succession.DemographicSeeding
         public int monteCarloDraws;
         private double maxLeafArea;
         private int cohortThreshold;
+        private double minCohortProp;
+        private double seedlingLeafArea;
         private string seedRainMaps;
         private string seedlingEmergenceMaps;
 
@@ -76,16 +78,57 @@ namespace Landis.Library.Succession.DemographicSeeding
             }
             set
             {
-                if (value <= 0.0 || value > Model.Core.CellArea)
+                if (value <= 0.0 || value > Model.Core.CellArea*(10000)) //m2
                     throw new InputValueException(value.ToString(),
                                                   string.Format("Max leaf area must be > 0 and <= CellArea ({0})",
-                                                                Model.Core.CellArea));
+                                                                Model.Core.CellArea * (10000)));
                 maxLeafArea = value;
             }
         }
 
         //---------------------------------------------------------------------
 
+        /// <summary>
+        /// Minimum proportion of max biomass that counts as a cohort
+        /// </summary>
+        public double MinCohortProp
+        {
+            get
+            {
+                return minCohortProp;
+            }
+            set
+            {
+                if (value <= 0)
+                    throw new InputValueException(value.ToString(),
+                                                  "MinCohortProp must be > 0");
+                if (value > 1)
+                    throw new InputValueException(value.ToString(),
+                                                  "MinCohortProp must be <= 1");
+                minCohortProp = value;
+            }
+        }
+
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Area (m2) that each seedling occupies
+        /// </summary>
+        public double SeedlingLeafArea
+        {
+            get
+            {
+                return seedlingLeafArea;
+            }
+            set
+            {
+                if (value <= 0)
+                    throw new InputValueException(value.ToString(),
+                                                  "SeedlingLeafArea must be > 0");
+                seedlingLeafArea = value;
+            }
+        }
+
+        //---------------------------------------------------------------------
         /// <summary>
         /// Minimum number of trees to establish a cohort under the default
         /// succession model.

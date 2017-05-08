@@ -48,5 +48,15 @@ namespace Landis.Library.Succession
         }
 
         //---------------------------------------------------------------------
+        /// <summary>
+        /// Determines if a species can establish on a site.
+        /// </summary>
+        public static double EstablishmentProbability(ISpecies species, ActiveSite site)
+        {
+            return 1.0;
+
+        }
+
+        //---------------------------------------------------------------------
     }
 }

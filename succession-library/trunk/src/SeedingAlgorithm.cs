@@ -9,5 +9,5 @@ namespace Landis.Library.Succession
     /// <param name="site">Site that may be seeded.</param>
     /// <returns>true if the species seeds the site.</returns>
     public delegate void SeedingAlgorithm(ISpecies   species,
-                                          ActiveSite site, out bool established, out int seedling_count);
+                                          ActiveSite site, out bool established, out double seedlingProportion);
 }

@@ -28,42 +28,41 @@ namespace Landis.Library.Succession
         public void Do(ActiveSite site)
         {
             // Accumulate seedling density if using demographic seeding
-            if (seedingAlgorithm.GetType() == typeof(DemographicSeeding.Algorithm))
-            {
+            //if (seedingAlgorithm.GetType() == typeof(DemographicSeeding.Algorithm))
+            //{
+            //    for (int i = 0; i < Model.Core.Species.Count; i++)
+            //    {
+            //        ISpecies species = Model.Core.Species[i];
+            //        bool established;
+            //        double seedlingProportion = 1.0;
+            //        seedingAlgorithm(species, site, out established, out seedlingProportion);
+            //            if(established)
+            //        {
+            //            // Temp set propBiomass to 1.0
+            //            Reproduction.AddNewCohort(species, site, seedlingProportion);
+            //            if (isDebugEnabled)
+            //                log.DebugFormat("site {0}: seeded {1}",
+            //                                site.Location, species.Name);
+            //        }
+            //    }
+            //}
+            //else
+            //{
                 for (int i = 0; i < Model.Core.Species.Count; i++)
                 {
                     ISpecies species = Model.Core.Species[i];
                     bool established;
-                    int seedlingCount;
-                    seedingAlgorithm(species, site, out established, out seedlingCount);
-                        if(established)
-                    {
-                        // Temp set propBiomass to 1.0
-                        Reproduction.AddNewCohort(species, site, 1.0);
-                        if (isDebugEnabled)
-                            log.DebugFormat("site {0}: seeded {1}",
-                                            site.Location, species.Name);
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < Model.Core.Species.Count; i++)
-                {
-                    ISpecies species = Model.Core.Species[i];
-                    bool established;
-                    int seedlingCount;
-                    seedingAlgorithm(species, site, out established, out seedlingCount);
+                    double seedlingProportion = 1.0 ;
+                    seedingAlgorithm(species, site, out established, out seedlingProportion);
                     if (established)
                     {
-                        // Temp set propBiomass to 1.0
-                        Reproduction.AddNewCohort(species, site, 1.0);
+                        Reproduction.AddNewCohort(species, site, seedlingProportion);
                         if (isDebugEnabled)
                             log.DebugFormat("site {0}: seeded {1}",
                                             site.Location, species.Name);
                     }
                 }
-            }
+            //}
         }
 
         //---------------------------------------------------------------------

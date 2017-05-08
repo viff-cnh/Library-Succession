@@ -85,7 +85,15 @@ namespace Landis.Library.Succession.DemographicSeeding
             if (ReadOptionalVar(maxLeafArea))
                 parameters.MaxLeafArea = maxLeafArea.Value;
             else
-                parameters.MaxLeafArea = Model.Core.CellArea;
+                parameters.MaxLeafArea = Model.Core.CellArea*10000; //m2
+
+            InputVar<double> seedlingLeafArea = new InputVar<double>("SeedlingLeafArea");
+            ReadVar(seedlingLeafArea);
+            parameters.SeedlingLeafArea = seedlingLeafArea.Value;
+
+            InputVar<double> minCohortProp = new InputVar<double>("MinCohortProp");
+            ReadVar(minCohortProp);
+            parameters.MinCohortProp = minCohortProp.Value;
 
             InputVar<int> cohortThreshold = new InputVar<int>("CohortThreshold");
             ReadVar(cohortThreshold);
@@ -122,7 +130,6 @@ namespace Landis.Library.Succession.DemographicSeeding
             InputVar<string> speciesName = new InputVar<string>("Species");
             InputVar<int> minSeeds = new InputVar<int>("Minimum Seeds Produced");
             InputVar<int> maxSeeds = new InputVar<int>("Maximum Seeds Produced");
-            InputVar<double> leafArea = new InputVar<double>("Seedling Leaf Area");
             InputVar<double> dispersalMean1 = new InputVar<double>("Dispersal Mean1");
             InputVar<double> dispersalMean2 = new InputVar<double>("Dispersal Mean2");
             InputVar<double> dispersalWeight1 = new InputVar<double>("Dispersal Weight1");
@@ -143,9 +150,6 @@ namespace Landis.Library.Succession.DemographicSeeding
 
                 ReadValue(maxSeeds, currentLine);
                 parameters.MaxSeedsProduced = maxSeeds.Value;
-
-                ReadValue(leafArea, currentLine);
-                parameters.LeafArea = leafArea.Value;
 
                 ReadValue(dispersalMean1, currentLine);
                 parameters.DispersalMean1 = dispersalMean1.Value;

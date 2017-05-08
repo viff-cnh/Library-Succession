@@ -45,6 +45,11 @@ namespace Landis.Library.Succession
             /// A method for determining whether a mature cohort is present at a site for a given species.
             /// </summary>
             public delegate bool MaturePresent(ISpecies species, ActiveSite site);
+
+            /// <summary>
+            /// A method for determining the stablishment probability at a site for a given species.
+            /// </summary>
+            public delegate double EstablishmentProbability(ISpecies species, ActiveSite site);
         }
 
         //---------------------------------------------------------------------
@@ -63,6 +68,7 @@ namespace Landis.Library.Succession
         private static Delegates.Establish estbMethod = ReproductionDefaults.Establish;
         private static Delegates.PlantingEstablish plantEstbMethod = ReproductionDefaults.PlantingEstablish;
         private static Delegates.MaturePresent isMaturePresentMethod;
+        public static Delegates.EstablishmentProbability estabProb = ReproductionDefaults.EstablishmentProbability;
 
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly bool isDebugEnabled = log.IsDebugEnabled;
@@ -150,6 +156,22 @@ namespace Landis.Library.Succession
             }
         }
         //---------------------------------------------------------------------
+        //---------------------------------------------------------------------
+
+        public static Delegates.EstablishmentProbability EstablishmentProbability
+        {
+            get
+            {
+                return estabProb;
+            }
+
+            set
+            {
+                Require.ArgumentNotNull(value);
+                estabProb = value;
+            }
+        }
+
 
         public static void Initialize(SeedingAlgorithm seedingAlgorithm)
         {
