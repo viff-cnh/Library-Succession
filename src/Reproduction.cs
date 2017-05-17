@@ -249,7 +249,7 @@ namespace Landis.Library.Succession
         //---------------------------------------------------------------------
 
         /// <summary>
-        /// Schedules a list of species to be planted at a site.
+        /// Prevents establishment due to land use change.
         /// </summary>
         public static void PreventEstablishment(ActiveSite site)
         {
