@@ -102,14 +102,15 @@ namespace Landis.Library.InitialCommunities
                         speciesLineNumbers[species.Name] = LineNumber;
 
                     //  Read ages
-                    List<ushort> ages = new List<ushort>();
+                    //List<ushort> ages = new List<ushort>();
+                    Dictionary<ushort, uint> ageBio = new Dictionary<ushort, uint>();
                     TextReader.SkipWhitespace(currentLine);
                     while (currentLine.Peek() != -1) {
                         ReadValue(age, currentLine);
                         if (age.Value.Actual == 0)
                             throw new InputValueException(age.Value.String,
                                                           "Ages must be > 0.");
-                        if (ages.Contains(age.Value.Actual))
+                        if (ageBio.ContainsKey(age.Value.Actual))
                             throw new InputValueException(age.Value.String,
                                                           "The age {0} appears more than once.",
                                                           age.Value.String);
@@ -123,14 +124,16 @@ namespace Landis.Library.InitialCommunities
                         biomass = ReadBiomass(currentLine);
                         //ages.Add(age.Value.Actual);
                         TextReader.SkipWhitespace(currentLine);
+                        ageBio.Add(age.Value.Actual, biomass);
                     }
-                    //if (ages.Count == 0)
-                    //    //  Try reading age which will throw exception
-                    //    ReadValue(age, currentLine);
+                    if (ageBio.Count == 0)
+                        //  Try reading age which will throw exception
+                        ReadValue(age, currentLine);
 
-                    ages = BinAges(ages);
-                    
-                    speciesCohortsList.Add(new SpeciesCohorts(species, age.Value.Actual, (float) biomass, (float) 0.0));
+                    ageBio = BinAges(ageBio);
+
+                    foreach (ushort age_key in ageBio.Keys)
+                        speciesCohortsList.Add(new SpeciesCohorts(species, age_key, (float) ageBio[age_key], (float)0.0));
                     
                     GetNextLine();
                 }
@@ -143,27 +146,43 @@ namespace Landis.Library.InitialCommunities
 
         //---------------------------------------------------------------------
 
-        private List<ushort> BinAges(List<ushort> ages)
+        private Dictionary<ushort, uint> BinAges(Dictionary<ushort, uint> ageBios)
         {
             if (successionTimestep <= 0)
-                return ages;
+                return ageBios;
 
-            ages.Sort();
-            for (int i = 0; i < ages.Count; i++) {
-                ushort age = ages[i];
-                if (age % successionTimestep != 0)
-                    ages[i] = (ushort) (((age / successionTimestep) + 1) * successionTimestep);
+            Dictionary<ushort, uint> newList = new Dictionary<ushort, uint>();
+
+            //ageBios.Sort();
+            //for (int i = 0; i < ages.Count; i++) {
+            //    ushort age = ages[i];
+            //    if (age % successionTimestep != 0)
+            //        ages[i] = (ushort) (((age / successionTimestep) + 1) * successionTimestep);
+            //}
+
+            foreach(ushort age in ageBios.Keys)
+            {
+                if (age % successionTimestep == 0)
+                    newList.Add(age, ageBios[age]);
+                else
+                {
+                    ushort new_age = (ushort)(((age / successionTimestep) + 1) * successionTimestep);
+                    if (newList.ContainsKey(new_age))
+                        newList[new_age] += ageBios[age];
+                    else
+                        newList.Add(new_age, ageBios[age]);
+                }
             }
 
             //    Remove duplicates, by going backwards through list from last
             //    item to the 2nd item, comparing each item with the one before
             //    it.
-            for (int i = ages.Count - 1; i >= 1; i--) {
-                if (ages[i] == ages[i-1])
-                    ages.RemoveAt(i);
-            }
+            //for (int i = ages.Count - 1; i >= 1; i--) {
+            //    if (ages[i] == ages[i-1])
+            //        ages.RemoveAt(i);
+            //}
 
-            return ages;
+            return newList; // ages;
         }
 
         public static InputValue<uint> ReadBiomass(StringReader reader)
