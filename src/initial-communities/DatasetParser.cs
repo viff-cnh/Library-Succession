@@ -102,7 +102,6 @@ namespace Landis.Library.InitialCommunities
                         speciesLineNumbers[species.Name] = LineNumber;
 
                     //  Read ages
-                    //List<ushort> ages = new List<ushort>();
                     Dictionary<ushort, uint> ageBio = new Dictionary<ushort, uint>();
                     TextReader.SkipWhitespace(currentLine);
                     while (currentLine.Peek() != -1) {
@@ -132,8 +131,17 @@ namespace Landis.Library.InitialCommunities
 
                     ageBio = BinAges(ageBio);
 
+
                     foreach (ushort age_key in ageBio.Keys)
-                        speciesCohortsList.Add(new SpeciesCohorts(species, age_key, (float) ageBio[age_key], (float)0.0));
+                    {
+                        float initialWoodBiomass = ageBio[age_key];
+                        if (initialWoodBiomass <= 0.0)
+                            throw new InputValueException(speciesName.Value.String,
+                                                          "Cohort {0}, age {1} has zero or negative biomass, line {2}",
+                                                          species.Name, age_key, lineNumber);
+
+                        speciesCohortsList.Add(new SpeciesCohorts(species, age_key, initialWoodBiomass, (float)0.0));
+                    }
                     
                     GetNextLine();
                 }
