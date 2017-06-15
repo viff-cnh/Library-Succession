@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Landis.Library.Succession</RootNamespace>
-    <AssemblyName>Landis.Library.Succession</AssemblyName>
+    <AssemblyName>Landis.Library.Succession-v2</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -34,32 +34,26 @@
     <Reference Include="Edu.Wisc.Forest.Flel.Util">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
-      <HintPath>..\..\..\..\..\Program Files\LANDIS-II\v6\bin\6.2\Edu.Wisc.Forest.Flel.Util.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Core">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
-      <HintPath>..\..\..\..\..\Program Files\LANDIS-II\v6\bin\6.2\Landis.Core.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.AgeOnlyCohorts">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
-      <HintPath>..\..\..\..\..\Program Files\LANDIS-II\v6\bin\extensions\Landis.Library.AgeOnlyCohorts.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.Cohorts">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
-      <HintPath>..\..\..\..\..\Program Files\LANDIS-II\v6\bin\extensions\Landis.Library.Cohorts.dll</HintPath>
     </Reference>
     <Reference Include="Landis.SpatialModeling">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
-      <HintPath>..\..\..\..\..\Program Files\LANDIS-II\v6\bin\6.2\Landis.SpatialModeling.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
-      <HintPath>..\..\..\..\..\Program Files\LANDIS-II\v6\bin\6.2\log4net.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
