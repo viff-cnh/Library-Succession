@@ -47,9 +47,19 @@ namespace Landis.Library.Succession
             public delegate bool MaturePresent(ISpecies species, ActiveSite site);
 
             /// <summary>
-            /// A method for determining the stablishment probability at a site for a given species.
+            /// A method for determining the establishment probability at a site for a given species.
             /// </summary>
             public delegate double EstablishmentProbability(ISpecies species, ActiveSite site);
+
+            /// <summary>
+            /// A method for determining the mature biomass at a site for a given species.
+            /// </summary>
+            public delegate double MatureBiomass(ISpecies species, ActiveSite site);
+
+            /// <summary>
+            /// A method for determining the active biomass at a site for a given species.
+            /// </summary>
+            public delegate double ActiveBiomass(ISpecies species, ActiveSite site);
         }
 
         //---------------------------------------------------------------------
@@ -69,6 +79,8 @@ namespace Landis.Library.Succession
         private static Delegates.PlantingEstablish plantEstbMethod = ReproductionDefaults.PlantingEstablish;
         private static Delegates.MaturePresent isMaturePresentMethod;
         public static Delegates.EstablishmentProbability estabProb = ReproductionDefaults.EstablishmentProbability;
+        public static Delegates.MatureBiomass matureBiomass = ReproductionDefaults.MatureBiomass;
+        public static Delegates.ActiveBiomass activeBiomass = ReproductionDefaults.ActiveBiomass;
 
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly bool isDebugEnabled = log.IsDebugEnabled;
@@ -155,7 +167,7 @@ namespace Landis.Library.Succession
                 isMaturePresentMethod = value;
             }
         }
-        //---------------------------------------------------------------------
+
         //---------------------------------------------------------------------
 
         public static Delegates.EstablishmentProbability EstablishmentProbability
@@ -172,6 +184,35 @@ namespace Landis.Library.Succession
             }
         }
 
+        //---------------------------------------------------------------------
+        public static Delegates.MatureBiomass MatureBiomass
+        {
+            get
+            {
+                return matureBiomass;
+            }
+
+            set
+            {
+                Require.ArgumentNotNull(value);
+                matureBiomass = value;
+            }
+        }
+        //---------------------------------------------------------------------
+        public static Delegates.ActiveBiomass ActiveBiomass
+        {
+            get
+            {
+                return activeBiomass;
+            }
+
+            set
+            {
+                Require.ArgumentNotNull(value);
+                activeBiomass = value;
+            }
+        }
+        //---------------------------------------------------------------------
 
         public static void Initialize(SeedingAlgorithm seedingAlgorithm)
         {

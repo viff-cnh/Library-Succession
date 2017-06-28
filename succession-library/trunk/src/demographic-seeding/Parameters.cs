@@ -23,7 +23,6 @@ namespace Landis.Library.Succession.DemographicSeeding
     {
         public int monteCarloDraws;
         private double maxLeafArea;
-        private int cohortThreshold;
         private double minCohortProp;
         private double seedlingLeafArea;
         private string seedRainMaps;
@@ -128,25 +127,7 @@ namespace Landis.Library.Succession.DemographicSeeding
             }
         }
 
-        //---------------------------------------------------------------------
-        /// <summary>
-        /// Minimum number of trees to establish a cohort under the default
-        /// succession model.
-        /// </summary>
-        public int CohortThreshold
-        {
-            get
-            {
-                return cohortThreshold;
-            }
-            set
-            {
-                if (value <= 0)
-                    throw new InputValueException(value.ToString(),
-                                                  "Cohort threshold must be > 0");
-                cohortThreshold = value;
-            }
-        }
+
 
         //---------------------------------------------------------------------
 

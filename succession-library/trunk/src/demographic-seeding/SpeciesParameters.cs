@@ -26,6 +26,7 @@ namespace Landis.Library.Succession.DemographicSeeding
         public double[] DispersalParameters { get; private set; }
         public double[] EmergenceProbabilities { get; private set; }
         public double[] SurvivalProbabilities { get; private set; }
+        public double[] MaxSeedBiomass { get; private set; }
 
         // Indexes for dispersal parameters
         public const int DoubleExponential_Mean1   = 0;
@@ -39,6 +40,7 @@ namespace Landis.Library.Succession.DemographicSeeding
             DispersalParameters = new double[3];
             EmergenceProbabilities = new double[Model.Core.Ecoregions.Count];
             SurvivalProbabilities = new double[Model.Core.Ecoregions.Count];
+            MaxSeedBiomass = new double[Model.Core.Ecoregions.Count];
         }
 
         //---------------------------------------------------------------------

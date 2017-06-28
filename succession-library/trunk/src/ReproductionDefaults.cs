@@ -58,5 +58,27 @@ namespace Landis.Library.Succession
         }
 
         //---------------------------------------------------------------------
+        /// <summary>
+        /// The mature biomass on a site.
+        /// </summary>
+        public static double MatureBiomass(ISpecies species, ActiveSite site)
+        {
+            double matureBiomass = 0;
+
+            return matureBiomass;
+        }
+
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// The active biomass on a site.
+        /// </summary>
+        public static double ActiveBiomass(ISpecies species, ActiveSite site)
+        {
+            double activeBiomass = 0;
+
+            return activeBiomass;
+        }
+
+        //---------------------------------------------------------------------
     }
 }

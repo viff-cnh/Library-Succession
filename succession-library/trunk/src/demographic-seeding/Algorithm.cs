@@ -91,7 +91,7 @@ namespace Landis.Library.Succession.DemographicSeeding
             seedingData.max_leaf_area    = parameters.MaxLeafArea;
             seedingData.seedling_leaf_area = parameters.SeedlingLeafArea;
             seedingData.min_cohort_prop = parameters.MinCohortProp;
-            seedingData.cohort_threshold = parameters.CohortThreshold;
+            //seedingData.cohort_threshold = parameters.CohortThreshold;
 
             seedRainMaps          = parameters.SeedRainMaps;
             seedlingEmergenceMaps = parameters.SeedlingEmergenceMaps;
@@ -115,6 +115,8 @@ namespace Landis.Library.Succession.DemographicSeeding
                 //          seedingData.emergence_probability[species.Index]);
                 CopyArray(speciesParameters.SurvivalProbabilities,
                           seedingData.survival_probability[species.Index]);
+                CopyArray(speciesParameters.MaxSeedBiomass,
+                          seedingData.max_seed_biomass[species.Index]);
             }
 
             foreach(Site site in Model.Core.Landscape.AllSites)
@@ -133,6 +135,8 @@ namespace Landis.Library.Succession.DemographicSeeding
                     foreach (ISpecies species in Model.Core.Species)
                     {
                         seedingData.emergence_probability[species.Index][x][y] = Reproduction.EstablishmentProbability(species, (ActiveSite)site);
+                        seedingData.mature_biomass[species.Index][x][y] = Reproduction.ActiveBiomass(species, (ActiveSite)site);
+                        
                     }
                 }
 
@@ -231,6 +235,10 @@ namespace Landis.Library.Succession.DemographicSeeding
                     seedingData.seedlings[s][x][y] = 0;
                     // Update the EmergenceProbability to be equal to EstablishmentProbability from Succession extension
                     seedingData.emergence_probability[s][x][y] = Reproduction.EstablishmentProbability(species, site);
+                    if (seedingData.seed_model == Seed_Model.BIOMASS)
+                    {
+                        seedingData.mature_biomass[s][x][y] = Reproduction.ActiveBiomass(species, site);
+                    }
                 }
             }
 
@@ -242,7 +250,7 @@ namespace Landis.Library.Succession.DemographicSeeding
 
                 // seedling count high enough to be considered a cohort by the
                 // SimOneTimestep method.
-                int cohortThresholdPlus1 = seedingData.cohort_threshold + 1;
+                //int cohortThresholdPlus1 = seedingData.cohort_threshold + 1;
 
                 foreach (ISpecies species in Model.Core.Species)
                 {
@@ -252,9 +260,13 @@ namespace Landis.Library.Succession.DemographicSeeding
                         a = 0;
                     int seedlingCount = 0;
                     if (Reproduction.MaturePresent(species, site))
+                    {
                         // This will cause SimOneTimestep to consider the
                         // species as reproductive at this site.
-                        seedlingCount = cohortThresholdPlus1;
+                        //seedlingCount = cohortThresholdPlus1;
+                        seedlingCount = 1;
+                    }
+
                     seedingData.cohorts[s][x][y][a] = seedlingCount;
                 }
             }

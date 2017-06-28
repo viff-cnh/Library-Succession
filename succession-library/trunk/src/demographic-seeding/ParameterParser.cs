@@ -32,6 +32,7 @@ namespace Landis.Library.Succession.DemographicSeeding
         {
             public const string EmergenceProbabilities = "EmergenceProbabilities";
             public const string SurvivalProbabilities = "SurvivalProbabilities";
+            public const string MaxSeedBiomass = "MaxSeedBiomass";
         }
 
         //---------------------------------------------------------------------
@@ -95,9 +96,6 @@ namespace Landis.Library.Succession.DemographicSeeding
             ReadVar(minCohortProp);
             parameters.MinCohortProp = minCohortProp.Value;
 
-            InputVar<int> cohortThreshold = new InputVar<int>("CohortThreshold");
-            ReadVar(cohortThreshold);
-            parameters.CohortThreshold = cohortThreshold.Value;
 
             InputVar<string> dispersalProbabilitiesLog = new InputVar<string>("DispersalProbabilitiesLog");
             if (ReadOptionalVar(dispersalProbabilitiesLog))
@@ -114,7 +112,12 @@ namespace Landis.Library.Succession.DemographicSeeding
             parameters.SpeciesParameters = ReadSpeciesParameters();
 
             ReadEmergenceProbabilities(parameters.SpeciesParameters);
+
             ReadSurvivalProbabilities(parameters.SpeciesParameters);
+            if (parameters.SeedProductionModel == Seed_Dispersal.Seed_Model.BIOMASS)
+            {
+                ReadMaxSeedBiomass(parameters.SpeciesParameters);
+            }
 
             return parameters;
         }
@@ -218,14 +221,26 @@ namespace Landis.Library.Succession.DemographicSeeding
         {
             ReadProbabilities(Names.SurvivalProbabilities,
                               "Survival Probability",
-                              "", // Means end-of-input only since name can never be empty
+                              Names.MaxSeedBiomass, // Means end-of-input only since name can never be empty
                               allSpeciesParameters,
                               delegate(SpeciesParameters speciesParameters)
                               {
                                   return speciesParameters.SurvivalProbabilities;
                               });
         }
+        //---------------------------------------------------------------------
 
+        protected void ReadMaxSeedBiomass(SpeciesParameters[] allSpeciesParameters)
+        {
+            ReadBiomass(Names.MaxSeedBiomass,
+                              "Max Seed Biomass",
+                              "", // Means end-of-input only since name can never be empty
+                              allSpeciesParameters,
+                              delegate(SpeciesParameters speciesParameters)
+                              {
+                                  return speciesParameters.MaxSeedBiomass;
+                              });
+        }
         //---------------------------------------------------------------------
 
         // A delegate for accessing a particular array of probabilities for a
@@ -267,6 +282,47 @@ namespace Landis.Library.Succession.DemographicSeeding
                         throw new InputValueException(probability.Value.String,
                                                       "Probability for ecoregion " + ecoregion.Name + " is not between 0.0 and 1.0");
                     probabilities[ecoregion.Index] = probability.Value;
+                }
+
+                CheckNoDataAfter(lastColumn, currentLine);
+                GetNextLine();
+            }
+        }
+        //---------------------------------------------------------------------
+
+        protected void ReadBiomass(string tableName,
+                                         string biomassName,
+                                         string nameAfterTable,
+                                         SpeciesParameters[] allSpeciesParameters,
+                                         GetProbabilities getProbabilities)
+        {
+            ReadName(tableName);
+
+            speciesLineNumbers.Clear();
+
+            InputVar<string> speciesName = new InputVar<string>("Species");
+            InputVar<double> biomass = new InputVar<double>(biomassName);
+
+            IEcoregion lastEcoregion = Model.Core.Ecoregions[Model.Core.Ecoregions.Count - 1];
+            string lastColumn = "the " + lastEcoregion.Name + " ecoregion column";
+
+            while (!AtEndOfInput && CurrentName != nameAfterTable)
+            {
+                StringReader currentLine = new StringReader(CurrentLine);
+
+                ReadValue(speciesName, currentLine);
+                ISpecies species = ValidateSpeciesName(speciesName);
+
+                SpeciesParameters parameters = allSpeciesParameters[species.Index];
+                double[] biomassValues = getProbabilities(parameters);
+
+                foreach (IEcoregion ecoregion in Model.Core.Ecoregions)
+                {
+                    ReadValue(biomass, currentLine);
+                    if (biomass.Value < 0.0 )
+                        throw new InputValueException(biomass.Value.String,
+                                                      "MaxSeedBiomass for ecoregion " + ecoregion.Name + " is less than 0");
+                    biomassValues[ecoregion.Index] = biomass.Value;
                 }
 
                 CheckNoDataAfter(lastColumn, currentLine);
