@@ -4,12 +4,12 @@ Project Component:	Library-Succession
 Component Deposition:	https://github.com/LANDIS-II-Foundation/Library-Succession
 Author:			LANDIS-II Foundation
 Origin Date:		10 May 2017
-Final Date:		10 May 2017
+Final Date:		15 June 2017
 
 
 Welcome to the source code repository for Library-Succession, a LANDIS-II supplemental library.
 
-The "Landis.Library.Succession.dll" library ...
+
 
 
 ##########################
