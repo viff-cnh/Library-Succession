@@ -85,7 +85,7 @@ namespace Landis.Library.Succession
                     }
                 }
             }
-            // Reset the BitArray to be empty so planting does does continue to recur on the site
+            // Reset the BitArray to be empty so planting does not continue to recur on the site
             selectedSpecies[site].SetAll(false);
             return success;
         }
