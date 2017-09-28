@@ -9,4 +9,5 @@
 [assembly: AssemblyConfiguration("Release")]
 #endif
 
+// change v4.0 to v5.0 (20170925)
 [assembly: AssemblyVersion("5.0.*")]
