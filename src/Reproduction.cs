@@ -259,6 +259,15 @@ namespace Landis.Library.Succession
         //---------------------------------------------------------------------
 
         /// <summary>
+        /// Re-enables establishment at a site for a list of species
+        /// </summary>
+        public static void EnableEstablishment(ActiveSite site)
+        {
+            noEstablish[site] = false;
+        }        
+        //---------------------------------------------------------------------
+
+        /// <summary>
         /// Does the appropriate forms of reproduction at a site.
         /// </summary>
         public static void Reproduce(ActiveSite site)
