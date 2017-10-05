@@ -15,6 +15,7 @@
 using Edu.Wisc.Forest.Flel.Util;
 using Landis.Core;
 using System.Collections.Generic;
+using Landis.Library.Parameters;
 
 namespace Landis.Library.Succession.DemographicSeeding
 {
@@ -33,6 +34,7 @@ namespace Landis.Library.Succession.DemographicSeeding
             public const string EmergenceProbabilities = "EmergenceProbabilities";
             public const string SurvivalProbabilities = "SurvivalProbabilities";
             public const string MaxSeedBiomass = "MaxSeedBiomass";
+            public const string SeedMass = "SeedMass";
         }
 
         //---------------------------------------------------------------------
@@ -116,7 +118,8 @@ namespace Landis.Library.Succession.DemographicSeeding
             ReadSurvivalProbabilities(parameters.SpeciesParameters);
             if (parameters.SeedProductionModel == Seed_Dispersal.Seed_Model.BIOMASS)
             {
-                ReadMaxSeedBiomass(parameters.SpeciesParameters);
+                //ReadMaxSeedBiomass(parameters.SpeciesParameters);
+               parameters.SpeciesParameters =  ReadSeedMass(parameters.SpeciesParameters);
             }
 
             return parameters;
@@ -221,7 +224,7 @@ namespace Landis.Library.Succession.DemographicSeeding
         {
             ReadProbabilities(Names.SurvivalProbabilities,
                               "Survival Probability",
-                              Names.MaxSeedBiomass, // Means end-of-input only since name can never be empty
+                              Names.SeedMass,
                               allSpeciesParameters,
                               delegate(SpeciesParameters speciesParameters)
                               {
@@ -242,6 +245,7 @@ namespace Landis.Library.Succession.DemographicSeeding
                               });
         }
         //---------------------------------------------------------------------
+
 
         // A delegate for accessing a particular array of probabilities for a
         // species.
@@ -289,7 +293,28 @@ namespace Landis.Library.Succession.DemographicSeeding
             }
         }
         //---------------------------------------------------------------------
+        protected SpeciesParameters[] ReadSeedMass(SpeciesParameters[] allSpeciesParameters)
+        {           
+            ReadName(Names.SeedMass);
+            speciesLineNumbers.Clear();
 
+            InputVar<string> speciesName = new InputVar<string>("Species");
+            InputVar<double> seedMass = new InputVar<double>("SeedMass");
+
+            while (!AtEndOfInput)
+            {
+                StringReader currentLine = new StringReader(CurrentLine);
+
+                ReadValue(speciesName, currentLine);
+                ISpecies species = ValidateSpeciesName(speciesName);
+
+                ReadValue(seedMass, currentLine);
+                allSpeciesParameters[species.Index].SeedMass = seedMass.Value;               
+                GetNextLine();
+            }
+            return allSpeciesParameters;
+        }
+        //---------------------------------------------------------------------
         protected void ReadBiomass(string tableName,
                                          string biomassName,
                                          string nameAfterTable,

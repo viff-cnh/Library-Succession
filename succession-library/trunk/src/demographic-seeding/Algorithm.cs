@@ -77,6 +77,7 @@ namespace Landis.Library.Succession.DemographicSeeding
                 seedingData.all_species[species.Index].shade_tolerance = species.ShadeTolerance;
                 seedingData.all_species[species.Index].reproductive_age = species.Maturity;
                 seedingData.all_species[species.Index].reproductive_age_steps = species.Maturity / successionTimestep;
+                seedingData.all_species[species.Index].SLWmax = Library.Parameters.Species
             }
 
             // Load user-specified parameters
@@ -109,6 +110,8 @@ namespace Landis.Library.Succession.DemographicSeeding
                 SpeciesParameters speciesParameters = parameters.SpeciesParameters[species.Index]; 
                 seedingData.all_species[species.Index].min_seed  = speciesParameters.MinSeedsProduced;
                 seedingData.all_species[species.Index].max_seed  = speciesParameters.MaxSeedsProduced;
+                seedingData.all_species[species.Index].seed_mass = speciesParameters.SeedMass;
+                seedingData.all_species[species.Index].SLWmax = speciesParameters.SLWmax;
                 CopyArray(speciesParameters.DispersalParameters,
                           seedingData.all_species[species.Index].dispersal_parameters);
                 //CopyArray(speciesParameters.EmergenceProbabilities,
@@ -136,6 +139,7 @@ namespace Landis.Library.Succession.DemographicSeeding
                     {
                         seedingData.emergence_probability[species.Index][x][y] = Reproduction.EstablishmentProbability(species, (ActiveSite)site);
                         seedingData.mature_biomass[species.Index][x][y] = Reproduction.ActiveBiomass(species, (ActiveSite)site);
+                        seedingData.fol_mass[species.Index][x][y] = Reproduction.MatureFolMass(species, (ActiveSite)site);
                         
                     }
                 }
@@ -237,7 +241,8 @@ namespace Landis.Library.Succession.DemographicSeeding
                     seedingData.emergence_probability[s][x][y] = Reproduction.EstablishmentProbability(species, site);
                     if (seedingData.seed_model == Seed_Model.BIOMASS)
                     {
-                        seedingData.mature_biomass[s][x][y] = Reproduction.ActiveBiomass(species, site);
+                        //seedingData.mature_biomass[s][x][y] = Reproduction.ActiveBiomass(species, site);
+                        seedingData.fol_mass[s][x][y] = Reproduction.MatureFolMass(species, site);
                     }
                 }
             }

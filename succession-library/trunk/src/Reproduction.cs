@@ -60,6 +60,13 @@ namespace Landis.Library.Succession
             /// A method for determining the active biomass at a site for a given species.
             /// </summary>
             public delegate double ActiveBiomass(ISpecies species, ActiveSite site);
+
+            /// <summary>
+            /// A method for determining the foliage mass at a site for a given species.
+            /// </summary>
+            public delegate double MatureFolMass(ISpecies species, ActiveSite site);
+
+
         }
 
         //---------------------------------------------------------------------
@@ -81,6 +88,7 @@ namespace Landis.Library.Succession
         public static Delegates.EstablishmentProbability estabProb = ReproductionDefaults.EstablishmentProbability;
         public static Delegates.MatureBiomass matureBiomass = ReproductionDefaults.MatureBiomass;
         public static Delegates.ActiveBiomass activeBiomass = ReproductionDefaults.ActiveBiomass;
+        public static Delegates.MatureFolMass folMass = ReproductionDefaults.MatureFolMass;
 
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly bool isDebugEnabled = log.IsDebugEnabled;
@@ -210,6 +218,20 @@ namespace Landis.Library.Succession
             {
                 Require.ArgumentNotNull(value);
                 activeBiomass = value;
+            }
+        }
+        //---------------------------------------------------------------------
+        public static Delegates.MatureFolMass MatureFolMass
+        {
+            get
+            {
+                return folMass;
+            }
+
+            set
+            {
+                Require.ArgumentNotNull(value);
+                folMass = value;
             }
         }
         //---------------------------------------------------------------------

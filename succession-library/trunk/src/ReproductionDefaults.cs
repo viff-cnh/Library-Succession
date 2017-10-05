@@ -80,5 +80,16 @@ namespace Landis.Library.Succession
         }
 
         //---------------------------------------------------------------------
+        /// <summary>
+        /// The mature foliage mass on a site.
+        /// </summary>
+        public static double MatureFolMass(ISpecies species, ActiveSite site)
+        {
+            double folMass = 0;
+
+            return folMass;
+        }
+
+        //---------------------------------------------------------------------
     }
 }

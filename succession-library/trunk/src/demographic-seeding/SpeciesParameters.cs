@@ -23,6 +23,8 @@ namespace Landis.Library.Succession.DemographicSeeding
     {
         private int minSeedsProduced;
         private int maxSeedsProduced;
+        private double seedMass;
+        private double slwMax;
         public double[] DispersalParameters { get; private set; }
         public double[] EmergenceProbabilities { get; private set; }
         public double[] SurvivalProbabilities { get; private set; }
@@ -82,7 +84,42 @@ namespace Landis.Library.Succession.DemographicSeeding
                 maxSeedsProduced = value;
             }
         }
-
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Average seed mass
+        /// </summary>
+        public double SeedMass
+        {
+            get
+            {
+                return seedMass;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new InputValueException(value.ToString(),
+                                                  "Seed mass must be = or > 0");
+                seedMass = value;
+            }
+        }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Specific leaf weight max
+        /// </summary>
+        public double SLWmax
+        {
+            get
+            {
+                return slwMax;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new InputValueException(value.ToString(),
+                                                  "SLWmax must be = or > 0");
+                slwMax = value;
+            }
+        }
         //---------------------------------------------------------------------
         /// <summary>
         /// Mean1 parameter for 2-component exponential dispersal kernel
