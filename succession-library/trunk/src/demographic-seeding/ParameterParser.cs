@@ -16,6 +16,7 @@ using Edu.Wisc.Forest.Flel.Util;
 using Landis.Core;
 using System.Collections.Generic;
 using Landis.Library.Parameters;
+using System;
 
 namespace Landis.Library.Succession.DemographicSeeding
 {
@@ -35,6 +36,7 @@ namespace Landis.Library.Succession.DemographicSeeding
             public const string SurvivalProbabilities = "SurvivalProbabilities";
             public const string MaxSeedBiomass = "MaxSeedBiomass";
             public const string SeedMass = "SeedMass";
+            public const string PnETParameters = "PnETSpeciesParameters";
         }
 
         //---------------------------------------------------------------------
@@ -119,7 +121,11 @@ namespace Landis.Library.Succession.DemographicSeeding
             if (parameters.SeedProductionModel == Seed_Dispersal.Seed_Model.BIOMASS)
             {
                 //ReadMaxSeedBiomass(parameters.SpeciesParameters);
-               parameters.SpeciesParameters =  ReadSeedMass(parameters.SpeciesParameters);
+                parameters.SpeciesParameters = ReadSeedMass(parameters.SpeciesParameters, Names.PnETParameters);
+                parameters.SpeciesParameters = ReadPnETParameters(parameters.SpeciesParameters);
+
+                //Calculate seed calibration factor
+                CalculateSeedCalibrationFactors(parameters.SpeciesParameters);
             }
 
             return parameters;
@@ -134,8 +140,8 @@ namespace Landis.Library.Succession.DemographicSeeding
             SpeciesParameters[] allSpeciesParameters = new SpeciesParameters[speciesDataset.Count];
 
             InputVar<string> speciesName = new InputVar<string>("Species");
-            InputVar<int> minSeeds = new InputVar<int>("Minimum Seeds Produced");
-            InputVar<int> maxSeeds = new InputVar<int>("Maximum Seeds Produced");
+            InputVar<double> minSeeds = new InputVar<double>("Minimum Seeds Produced");
+            InputVar<double> maxSeeds = new InputVar<double>("Maximum Seeds Produced");
             InputVar<double> dispersalMean1 = new InputVar<double>("Dispersal Mean1");
             InputVar<double> dispersalMean2 = new InputVar<double>("Dispersal Mean2");
             InputVar<double> dispersalWeight1 = new InputVar<double>("Dispersal Weight1");
@@ -175,6 +181,26 @@ namespace Landis.Library.Succession.DemographicSeeding
                 throw NewParseException("Expected a line starting with a species name");
 
             return allSpeciesParameters;
+        }
+
+        //---------------------------------------------------------------------
+        protected SpeciesParameters[] CalculateSeedCalibrationFactors(SpeciesParameters[] speciesParameters)
+        {
+            foreach (ISpecies spc in speciesDataset)
+            {
+                double frActWd = speciesParameters[spc.Index].FrActWd;
+                double slwMax = speciesParameters[spc.Index].SLWmax;
+                double peakFoliageBiomass = 7.5e12 * frActWd * frActWd - 1.175e9 * frActWd + 60000;
+                double fActiveBiom = Math.Exp(-1 * frActWd * peakFoliageBiomass);
+                double maxFoliage = speciesParameters[spc.Index].FracFol * fActiveBiom * peakFoliageBiomass;
+                //estimate seeds at peak foliage
+                double estimateSeeds = (1.0 / slwMax) * Math.Pow(speciesParameters[spc.Index].SeedMass, -0.58) * Math.Pow(maxFoliage / ((maxFoliage / slwMax) + 1), 0.9234);
+                //calculate ratio for estimated and actual seeds at peak foliage
+                double actualMaxSeeds = speciesParameters[spc.Index].MaxSeedsProduced;
+                double seedCalibration = actualMaxSeeds / estimateSeeds;
+                speciesParameters[spc.Index].SeedCalibration = seedCalibration;
+            }
+            return speciesParameters;
         }
 
         //---------------------------------------------------------------------
@@ -293,13 +319,37 @@ namespace Landis.Library.Succession.DemographicSeeding
             }
         }
         //---------------------------------------------------------------------
-        protected SpeciesParameters[] ReadSeedMass(SpeciesParameters[] allSpeciesParameters)
+        protected SpeciesParameters[] ReadSeedMass(SpeciesParameters[] allSpeciesParameters, string nameAfterTable)
         {           
             ReadName(Names.SeedMass);
             speciesLineNumbers.Clear();
 
             InputVar<string> speciesName = new InputVar<string>("Species");
             InputVar<double> seedMass = new InputVar<double>("SeedMass");
+
+            while (!AtEndOfInput && CurrentName != nameAfterTable)
+            {
+                StringReader currentLine = new StringReader(CurrentLine);
+
+                ReadValue(speciesName, currentLine);
+                ISpecies species = ValidateSpeciesName(speciesName);
+
+                ReadValue(seedMass, currentLine);
+                allSpeciesParameters[species.Index].SeedMass = seedMass.Value; 
+                GetNextLine();
+            }
+            return allSpeciesParameters;
+        }
+        //---------------------------------------------------------------------
+        protected SpeciesParameters[] ReadPnETParameters(SpeciesParameters[] allSpeciesParameters)
+        {
+            ReadName(Names.PnETParameters);
+            speciesLineNumbers.Clear();
+
+            InputVar<string> speciesName = new InputVar<string>("Species");
+            InputVar<double> slwMax = new InputVar<double>("SLWMax");
+            InputVar<double> fracFol = new InputVar<double>("FracFol");
+            InputVar<double> frActWd = new InputVar<double>("FrActWd");
 
             while (!AtEndOfInput)
             {
@@ -308,8 +358,14 @@ namespace Landis.Library.Succession.DemographicSeeding
                 ReadValue(speciesName, currentLine);
                 ISpecies species = ValidateSpeciesName(speciesName);
 
-                ReadValue(seedMass, currentLine);
-                allSpeciesParameters[species.Index].SeedMass = seedMass.Value;               
+                ReadValue(slwMax, currentLine);
+                allSpeciesParameters[species.Index].SLWmax = slwMax.Value;
+
+                ReadValue(fracFol, currentLine);
+                allSpeciesParameters[species.Index].FracFol = fracFol.Value;
+
+                ReadValue(frActWd, currentLine);
+                allSpeciesParameters[species.Index].FrActWd = frActWd.Value;
                 GetNextLine();
             }
             return allSpeciesParameters;

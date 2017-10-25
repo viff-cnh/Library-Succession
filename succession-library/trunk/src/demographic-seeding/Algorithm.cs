@@ -77,7 +77,6 @@ namespace Landis.Library.Succession.DemographicSeeding
                 seedingData.all_species[species.Index].shade_tolerance = species.ShadeTolerance;
                 seedingData.all_species[species.Index].reproductive_age = species.Maturity;
                 seedingData.all_species[species.Index].reproductive_age_steps = species.Maturity / successionTimestep;
-                seedingData.all_species[species.Index].SLWmax = Library.Parameters.Species
             }
 
             // Load user-specified parameters
@@ -112,6 +111,8 @@ namespace Landis.Library.Succession.DemographicSeeding
                 seedingData.all_species[species.Index].max_seed  = speciesParameters.MaxSeedsProduced;
                 seedingData.all_species[species.Index].seed_mass = speciesParameters.SeedMass;
                 seedingData.all_species[species.Index].SLWmax = speciesParameters.SLWmax;
+                seedingData.all_species[species.Index].seedCalibration = speciesParameters.SeedCalibration;
+
                 CopyArray(speciesParameters.DispersalParameters,
                           seedingData.all_species[species.Index].dispersal_parameters);
                 //CopyArray(speciesParameters.EmergenceProbabilities,

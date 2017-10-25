@@ -21,10 +21,13 @@ namespace Landis.Library.Succession.DemographicSeeding
     /// </summary>
     public class SpeciesParameters
     {
-        private int minSeedsProduced;
-        private int maxSeedsProduced;
+        private double minSeedsProduced;
+        private double maxSeedsProduced;
         private double seedMass;
         private double slwMax;
+        private double fracFol;
+        private double frActWd;
+        private double seedCalibration;
         public double[] DispersalParameters { get; private set; }
         public double[] EmergenceProbabilities { get; private set; }
         public double[] SurvivalProbabilities { get; private set; }
@@ -50,7 +53,7 @@ namespace Landis.Library.Succession.DemographicSeeding
         /// <summary>
         /// Minimum number of seeds produced by an occupied cell in a year.
         /// </summary>
-        public int MinSeedsProduced
+        public double MinSeedsProduced
         {
             get
             {
@@ -70,7 +73,7 @@ namespace Landis.Library.Succession.DemographicSeeding
         /// <summary>
         /// Maximum number of seeds produced by an occupied cell in a year.
         /// </summary>
-        public int MaxSeedsProduced
+        public double MaxSeedsProduced
         {
             get
             {
@@ -118,6 +121,60 @@ namespace Landis.Library.Succession.DemographicSeeding
                     throw new InputValueException(value.ToString(),
                                                   "SLWmax must be = or > 0");
                 slwMax = value;
+            }
+        }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Fraction Active Wood
+        /// </summary>
+        public double FrActWd
+        {
+            get
+            {
+                return frActWd;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new InputValueException(value.ToString(),
+                                                  "FrActWd must be = or > 0");
+                frActWd = value;
+            }
+        }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Fraction Foliage
+        /// </summary>
+        public double FracFol
+        {
+            get
+            {
+                return fracFol;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new InputValueException(value.ToString(),
+                                                  "FracFol must be = or > 0");
+                fracFol = value;
+            }
+        }
+        //---------------------------------------------------------------------
+        /// <summary>
+        /// Seed Calibration factor
+        /// </summary>
+        public double SeedCalibration
+        {
+            get
+            {
+                return seedCalibration;
+            }
+            set
+            {
+                if (value < 0)
+                    throw new InputValueException(value.ToString(),
+                                                  "SeedCalibration must be = or > 0");
+                seedCalibration = value;
             }
         }
         //---------------------------------------------------------------------
