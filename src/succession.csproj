@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace>Landis.Library.Succession</RootNamespace>
-    <AssemblyName>Landis.Library.Succession-vAGB-Input</AssemblyName>
+    <AssemblyName>Landis.Library.Succession</AssemblyName>
     <AssemblyTitle>Succession Library</AssemblyTitle>
     <AssemblyDescription>Succession Library for LANDIS-II</AssemblyDescription>
     <AssemblyVersion>4.0</AssemblyVersion>
