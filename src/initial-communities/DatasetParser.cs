@@ -243,7 +243,7 @@ namespace Landis.Library.InitialCommunities
                 throw MakeInputValueException(valueAsStr.ToString(),
                                               string.Format("Value ends with \"{0}\" instead of \")\"", ch));
             
-            Landis.Library.Succession.Model.Core.UI.WriteLine("Read in biomass value: {0}", biomass);
+            //Landis.Library.Succession.Model.Core.UI.WriteLine("Read in biomass value: {0}", biomass);
 
             return new InputValue<uint>(biomass, "Biomass gm-2"); 
         }
